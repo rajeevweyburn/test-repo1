@@ -1,5 +1,6 @@
 package com.example;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.Date;
@@ -20,7 +21,8 @@ public class Bid {
 
     private long bidAmount;
 
-	@Temporal(TemporalType.DATE)
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm")
+	@Temporal(TemporalType.TIMESTAMP)
     private Date bidDate;
 	
 	@JsonIgnore

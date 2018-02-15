@@ -10,7 +10,7 @@ class NotFoundException extends RuntimeException {
 		super("could not find '" + empName + "'.");
 	}
 	
-	public NotFoundException(long id) {
+	public NotFoundException(Long id) {
 		super("could not find " + id + ".");
 	}
 }

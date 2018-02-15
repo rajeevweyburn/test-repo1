@@ -1,5 +1,6 @@
 package com.example;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.Date;
@@ -30,7 +31,8 @@ public class Project {
 
     private long budgetAmount;
 
-	@Temporal(TemporalType.DATE)
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm")
+	@Temporal(TemporalType.TIMESTAMP)
     private Date projEndDate;
 
     private String description;
@@ -60,7 +62,7 @@ public class Project {
 		return budgetAmount;
 	}
     
-    public Date getProjecteEndDate() {
+    public Date getProjEndDate() {
 		return projEndDate;
 	}
 

@@ -11,10 +11,10 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.Collection;
-import java.util.Optional;
+import java.util.Date;
 
 @RestController
-@RequestMapping("/{userId}/bookmarks")
+@RequestMapping("")
 class BidRestController {
 
 	private final EmployerRepository employerRepository;
@@ -29,23 +29,30 @@ class BidRestController {
 		this.bidRepository = bidRepository;
 	}
 
-	@RequestMapping(method = RequestMethod.GET)
-	Collection<Project> getProjects(@PathVariable String empName) {
-		this.validateUser(empName);
-		return this.projectRepository.findByEmployerName(empName);
+	@RequestMapping(method = RequestMethod.GET, value = "/employer/{empId}/project/{projectId}")
+	Project getProject(@PathVariable long empId, @PathVariable long projectId) {
+		this.validateUser(empId);
+		return this.projectRepository.findOne(projectId);
 	}
 	
-	@RequestMapping(method = RequestMethod.GET)
-	Collection<Project> getProjects() {
+	@RequestMapping(method = RequestMethod.GET, value = "/employer/{empId}")
+	Collection<Project> getProjects(@PathVariable long empId) {
+		this.validateUser(empId);
+		return this.projectRepository.findByEmployerId(empId);
+	}
+	
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/projects")
+	Collection<Project> getAllProjects() {
 		return this.projectRepository.findAll();
 	}
 
-	@RequestMapping(method = RequestMethod.POST)
-	ResponseEntity<?> add(@PathVariable String empName, @RequestBody Project input) {
-		Employer employer = this.validateUser(empName);
+	@RequestMapping(method = RequestMethod.POST, value = "/employer/{empId}")
+	ResponseEntity<?> add(@PathVariable long empId, @RequestBody Project input) {
+		Employer employer = this.validateUser(empId);
 	
 		Project result = projectRepository.save(new Project(employer,
-				input.getDescription(), input.getProjecteEndDate(), input.getBudgetAmount()));
+				input.getDescription(), input.getProjEndDate(), input.getBudgetAmount()));
 
 		URI location = ServletUriComponentsBuilder
 			.fromCurrentRequest().path("/{id}")
@@ -54,12 +61,12 @@ class BidRestController {
 		return ResponseEntity.created(location).build();
 	}
 	
-	@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping(method = RequestMethod.POST, value = "/project/{projId}")
 	ResponseEntity<?> bid(@PathVariable long projId, @RequestBody Bid input) {
 	
 		Project proj = this.validateProject(projId);
 		
-		Bid result = bidRepository.save(new Bid(proj, input.getBidDate(), input.getBidAmount()));
+		Bid result = bidRepository.save(new Bid(proj, new Date(), input.getBidAmount()));
 
 		URI location = ServletUriComponentsBuilder
 			.fromCurrentRequest().path("/{id}")
@@ -68,24 +75,18 @@ class BidRestController {
 		return ResponseEntity.created(location).build();
 	}
 
-	@RequestMapping(method = RequestMethod.GET, value = "/{projectid}")
-	Project readProject(@PathVariable String empName, @PathVariable Long projectId) {
-		this.validateUser(empName);
-		return this.projectRepository.findOne(projectId);
-	}
-
-	private Employer validateUser(String empName) throws NotFoundException {
-		Employer employer = employerRepository.findByName(empName);
+	private Employer validateUser(long empId) {
+		Employer employer = employerRepository.findOne(empId);
 		if(  employer == null ) 
-			new NotFoundException(empName);
+			throw new NotFoundException(empId);
 		 
 			return employer;
 	}
 	
-	private Project validateProject(Long projId) throws NotFoundException {
+	private Project validateProject(Long projId) {
 		Project proj = projectRepository.findOne(projId);
 		if(  proj == null ) 
-			new NotFoundException(projId);
+			throw new NotFoundException(projId);
 		 
 		return proj;
 	}

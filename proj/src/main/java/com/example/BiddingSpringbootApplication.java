@@ -45,12 +45,15 @@ public class BiddingSpringbootApplication {
 			String tmp = "2018-02-25 09:";
 			long counterValue = counter.incrementAndGet();
 			
+			log.info("Rajeev debug\t" + tmp+String.valueOf(counterValue%60) + "\t" + "\n" + 
+					simpleDateFormat.parse(tmp+String.valueOf(counterValue%60)) );
+			
 			for (String empName : emplNames) {
 	
 				Employer employer = employerRepository.save(new Employer(empName,
 						"password"));
 				Project proj1 = projectRepository.save(new Project(employer,
-						"A description" + counter.incrementAndGet() ,  simpleDateFormat.parse(tmp+String.valueOf(counterValue%60)), 
+						"description" + counter.incrementAndGet() , simpleDateFormat.parse(tmp+String.valueOf(counterValue%60)), 
 						counter.incrementAndGet()) );
 				
 				bidRepository.save(new Bid(proj1,
@@ -60,11 +63,9 @@ public class BiddingSpringbootApplication {
 				
 				counterValue = counter.incrementAndGet();
 				Project proj2 = projectRepository.save(new Project(employer,
-						"A description" + counter.incrementAndGet() ,  simpleDateFormat.parse(tmp+String.valueOf(counterValue%60)), 
+						"description_a" + counter.incrementAndGet() ,  simpleDateFormat.parse(tmp+String.valueOf(counterValue%60)), 
 						counter.incrementAndGet()) );
 				
-				bidRepository.save(new Bid(proj2,
-						  simpleDateFormat.parse(tmp+String.valueOf(counterValue%60)), counter.incrementAndGet()));
 				bidRepository.save(new Bid(proj2,
 						  simpleDateFormat.parse(tmp+String.valueOf(counterValue%60)), counter.incrementAndGet()));
 				
@@ -77,12 +78,12 @@ public class BiddingSpringbootApplication {
 				
 				projects  = projectRepository.findByEmployerId(employer.getId());
 				for (Project project : projects) {
-					log.info("Project\t" + project.getId() + "\t" + project.getProjecteEndDate() + "\t" + project.getBudgetAmount()
-					     + "\t" + project.getDescription());
+					log.info("Project\t" + project.getId() + "\t" + project.getDescription() + "\t" + project.getBudgetAmount()
+					     + "\t" + project.getProjEndDate());
 					
-					bids  = project.getBids();
+					bids  = bidRepository.findByProjectId(project.getId());
 					for (Bid bid : bids)
-						log.info("Bid\t" + bid.getId() + "\t" + bid.getBidDate() + "\t" + bid.getBidAmount());
+						log.info("Bid\t" + bid.getId() + "\t" + bid.getBidAmount() + "\t" + bid.getBidDate());
 				}
 			}
 			
