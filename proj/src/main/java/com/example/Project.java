@@ -69,5 +69,9 @@ public class Project {
 	public Set<Bid> getBids() {
 		return bids;
 	}
+	
+	public void setBids(Set<Bid> bids) {
+		this.bids = bids;
+	}
 
 }

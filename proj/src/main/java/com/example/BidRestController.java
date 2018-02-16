@@ -10,8 +10,16 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 @RestController
 @RequestMapping("")
@@ -32,7 +40,33 @@ class BidRestController {
 	@RequestMapping(method = RequestMethod.GET, value = "/employer/{empId}/project/{projectId}")
 	Project getProject(@PathVariable long empId, @PathVariable long projectId) {
 		this.validateUser(empId);
-		return this.projectRepository.findOne(projectId);
+		Project project = this.projectRepository.findOne(projectId);
+		
+		SortedSet<Bid> mybids = new TreeSet<>(new Comparator<Bid>() {
+	        public int compare(Bid b1, Bid b2) {
+	            if( b1.getBidAmount() > b2.getBidAmount()) return 1;
+	            else if ( b1.getBidAmount() < b2.getBidAmount()) return -1;
+	            else return 0;
+	        }
+	    });
+		
+		mybids.addAll(project.getBids());
+		Bid leastBid = null;
+		
+		Iterator<Bid> it = mybids.iterator();
+	     while(it.hasNext()){
+	    	 leastBid = it.next();
+	        if( leastBid.getBidDate().before(project.getProjEndDate()) )
+	        	break;
+	     }
+	     
+		Set<Bid> bids = new HashSet<Bid>();
+		if( leastBid != null ) {
+			bids.add(leastBid);
+			project.setBids(bids);
+		}
+		
+		return project;
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/employer/{empId}")
@@ -44,7 +78,17 @@ class BidRestController {
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/projects")
 	Collection<Project> getAllProjects() {
-		return this.projectRepository.findAll();
+		
+		Collection<Project> projects = this.projectRepository.findAll();
+		
+		Collection<Project> notExpiredProjects = new ArrayList<Project>();
+		
+		 for(Project proj : projects) {
+			 if( proj.getProjEndDate().after(new Date()))
+				 notExpiredProjects.add(proj);
+		 }
+		
+		return notExpiredProjects;
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/employer/{empId}")
@@ -66,6 +110,9 @@ class BidRestController {
 	
 		Project proj = this.validateProject(projId);
 		
+		if(  new Date().after(proj.getProjEndDate()))
+			throw new NotFoundException(projId);
+			
 		Bid result = bidRepository.save(new Bid(proj, new Date(), input.getBidAmount()));
 
 		URI location = ServletUriComponentsBuilder

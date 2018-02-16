@@ -11,6 +11,6 @@ class NotFoundException extends RuntimeException {
 	}
 	
 	public NotFoundException(Long id) {
-		super("could not find " + id + ".");
+		super("could not find or bid expired" + id + ".");
 	}
 }

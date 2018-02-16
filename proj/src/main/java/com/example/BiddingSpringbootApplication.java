@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -41,8 +42,8 @@ public class BiddingSpringbootApplication {
 	
 			List<String> emplNames = new ArrayList<String>();
 			emplNames.add("Employer1");
-			emplNames.add("Employer1");
-			String tmp = "2018-02-25 09:";
+			emplNames.add("Employer2");
+			String tmp = "2018-02-25 09:";String tmp1 = "2018-02-27 09:";
 			long counterValue = counter.incrementAndGet();
 			
 			log.info("Rajeev debug\t" + tmp+String.valueOf(counterValue%60) + "\t" + "\n" + 
@@ -56,18 +57,16 @@ public class BiddingSpringbootApplication {
 						"description" + counter.incrementAndGet() , simpleDateFormat.parse(tmp+String.valueOf(counterValue%60)), 
 						counter.incrementAndGet()) );
 				
-				bidRepository.save(new Bid(proj1,
-						  simpleDateFormat.parse(tmp+String.valueOf(counterValue%60)), counter.incrementAndGet()));
-				bidRepository.save(new Bid(proj1,
-						  simpleDateFormat.parse(tmp+String.valueOf(counterValue%60)), counter.incrementAndGet()));
+				//bidRepository.save(new Bid(proj1, new Date(), counter.incrementAndGet()));
+				bidRepository.save(new Bid(proj1, simpleDateFormat.parse(tmp1+String.valueOf(counterValue%60)), counter.incrementAndGet()));
+				bidRepository.save(new Bid(proj1, new Date(), counter.incrementAndGet()));
 				
 				counterValue = counter.incrementAndGet();
 				Project proj2 = projectRepository.save(new Project(employer,
 						"description_a" + counter.incrementAndGet() ,  simpleDateFormat.parse(tmp+String.valueOf(counterValue%60)), 
 						counter.incrementAndGet()) );
 				
-				bidRepository.save(new Bid(proj2,
-						  simpleDateFormat.parse(tmp+String.valueOf(counterValue%60)), counter.incrementAndGet()));
+				bidRepository.save(new Bid(proj2, new Date(), counter.incrementAndGet()));
 				
 			}
 			
