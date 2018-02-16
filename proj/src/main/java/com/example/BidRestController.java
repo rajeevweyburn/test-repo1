@@ -105,7 +105,7 @@ class BidRestController {
 		return ResponseEntity.created(location).build();
 	}
 	
-	@RequestMapping(method = RequestMethod.POST, value = "/project/{projId}")
+	@RequestMapping(method = RequestMethod.POST, value = "/project/{projId}/bid")
 	ResponseEntity<?> bid(@PathVariable long projId, @RequestBody Bid input) {
 	
 		Project proj = this.validateProject(projId);

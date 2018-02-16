@@ -10,7 +10,7 @@ Step 3 : BiddingSpringbootApplication creates static data on startup for creatin
          
 Step 4 : http://localhost:8080/projects --> Gets all projects from all employers 
 
-Step 5 : http://localhost:8080/employer/1 --> gets all projects created by employer with id 1 
+Step 5 : http://localhost:8080/employer/1 --> gets all projects/bids created by employer with id 1 
 Content-Type --> application/json Accept --> application/json
 
 Step 6 : http://localhost:8080/employer/1/project/1 --> get lowest bid for a project id ... returns only the lowest valid 
@@ -24,7 +24,7 @@ Step 7 : POST --> http://localhost:8080/employer/1 --> creates a new project for
     "description": "description_new1"
 }
 
-Step 8 : POST http://localhost:8080/project/2 --> Bid a project with id 2 --> throws a exception if bid date is past project date
+Step 8 : POST http://localhost:8080/project/2/bid --> Bid a project with id 2 --> throws a exception if bid date is past project date
 
 {
     "bidAmount": 99
