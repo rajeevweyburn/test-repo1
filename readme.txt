@@ -24,7 +24,7 @@ Step 7 : POST --> http://localhost:8080/employer/1 --> creates a new project for
     "description": "description_new1"
 }
 
-Step 8 : POST http://localhost:8080/project/2 --> Bid a project with id 2 
+Step 8 : POST http://localhost:8080/project/2 --> Bid a project with id 2 --> throws a exception if bid date is past project date
 
 {
     "bidAmount": 99
